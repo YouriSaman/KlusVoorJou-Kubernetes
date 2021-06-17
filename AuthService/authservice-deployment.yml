@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    klusvoorjou.service: authservice
+  name: authservice
+  namespace: klusvoorjou
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      klusvoorjou.service: authservice
+  template:
+    metadata:
+      labels:
+        klusvoorjou.service: authservice
+    spec:
+      containers:
+      - name: klusvoorjou-authservice
+        image: youris30/kvj_authservice
+        imagePullPolicy: Always
+        env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: dev
+          - name: ASPNETCORE_URLS
+            value: http://+:80 
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+          requests:
+            memory: "20Mi"
+            cpu: "100m"        
+      hostname: authservice
+      restartPolicy: Always

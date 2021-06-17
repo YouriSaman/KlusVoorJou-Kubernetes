@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    klusvoorjou.service: authservice-db
+    app: authservice
+    version: "1.0"
+  name: authservice-db
+  namespace: klusvoorjou
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      klusvoorjou.service: authservice-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        klusvoorjou.service: authservice-db
+        app: authservice
+        version: "1.0"
+    spec:
+      containers:
+      - image: mysql:8.0
+        imagePullPolicy: IfNotPresent
+        args:
+        - --default-authentication-plugin=mysql_native_password
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: 0BacLRU@1h
+        name: authservice-db
+        ports:
+        - containerPort: 3306
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: authservice-db-volume
+      hostname: authservice-db
+      restartPolicy: Always
+      volumes:
+      - name: authservice-db-volume
+        persistentVolumeClaim:
+          claimName: authservice-db-pvc
